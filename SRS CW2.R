@@ -249,9 +249,10 @@ plot(mod, what = "density", type = "persp", col="#16A085", shade=0.1, theta=30,
 
 #### Monte Carlo Simulation
 # https://stats.stackexchange.com/questions/390777/how-to-compute-integrated-squared-error-for-kernel-density-estimation-in-r
-# Simulate 250 times
-sim = 250
+# Sample size=1000
+sim = 1000
 siz.sample = 1000
+
 
 
 ### Normal(0,1)
@@ -264,12 +265,12 @@ for (i in 1:sim) {
   bw.kde <- bw.SJ(sim.data)
   #Estimate
   sim.dens <- density(sim.data, bw = bw.kde)
-
+  
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sim.dens$x, (sim.dens$y - dnorm(sim.dens$x))^2)
 }
-sum(ise)/sim
-sd(ise)
+c1 = sum(ise)/sim
+d1 = sd(ise)
 
 ## Histogram
 set.seed(101145)
@@ -281,8 +282,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(sim.data), (dens.hist(his) - dnorm(sort(sim.data)))^2)
 }
-sum(ise)/sim
-sd(ise)
+c2 = sum(ise)/sim
+d2 = sd(ise)
 
 ## Mixture Gaussian 
 set.seed(101145)
@@ -293,8 +294,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(mod$data), (mod$density[order(mod$data)] - dnorm(sort(mod$data)))^2)
 }
-sum(ise)/sim
-sd(ise)
+c3 = sum(ise)/sim
+d3 = sd(ise)
 
 
 ## Smooth Spline
@@ -308,8 +309,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = xx, (dssden(fit, xx) - dnorm(xx))^2)
 }
-sum(ise)/sim
-sd(ise)
+c4 = sum(ise)/sim
+d4 = sd(ise)
 
 
 
@@ -327,8 +328,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sim.dens$x, (sim.dens$y - dgamma(sim.dens$x, shape = 2, scale = 3))^2)
 }
-sum(ise)/sim
-sd(ise)
+c5 = sum(ise)/sim
+d5 = sd(ise)
 
 
 ## Histogram
@@ -341,8 +342,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(sim.data), (dens.hist(his) - dgamma(sort(sim.data), shape = 2, scale = 3))^2)
 }
-sum(ise)/sim
-sd(ise)
+c6 = sum(ise)/sim
+d6 = sd(ise)
 
 
 ## Mixture Gaussian 
@@ -354,8 +355,8 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(mod$data), (mod$density[order(mod$data)] - dgamma(sort(mod$data), shape = 2, scale = 3))^2)
 }
-sum(ise)/sim
-sd(ise)
+c7 = sum(ise)/sim
+d7 = sd(ise)
 
 
 ## Smooth Spline
@@ -369,15 +370,15 @@ for (i in 1:sim) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = xx, (dssden(fit, xx) - dgamma(xx, shape = 2, scale = 3))^2)
 }
-sum(ise)/sim
-sd(ise)
+c8 = sum(ise)/sim
+d8 = sd(ise)
 
 ### Mixture distribution
 ## KDE
 set.seed(101145)
 ise = c()
 for (i in 1:250) {
-  sim.data = c(rnorm(700, -10, 1), rnorm(300, 5, 0.5))
+  sim.data = c(rnorm(siz.sample*0.7, -10, 1), rnorm(siz.sample*0.3, 5, 0.5))
   #Computing of bandwidth
   bw.kde <- bw.SJ(sim.data)
   #Estimate
@@ -386,47 +387,47 @@ for (i in 1:250) {
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sim.dens$x, (sim.dens$y - (0.7*dnorm(sim.dens$x, -10, 1) + 0.3*dnorm(sim.dens$x, 5, 0.5)))^2)
 }
-sum(ise)/sim
-sd(ise)
+c9 = sum(ise)/sim
+d9 = sd(ise)
 
 
 ## Histogram
 set.seed(101145)
 ise = c()
 for (i in 1:sim) {
-  sim.data = c(rnorm(700, -10, 1), rnorm(300, 5, 0.5))
+  sim.data = c(rnorm(siz.sample*0.7, -10, 1), rnorm(siz.sample*0.3, 5, 0.5))
   siz.hist <- cv.hist.fun(sim.data)$mbest
   his = hist(sim.data, probability=T, breaks= seq(min(sim.data), max(sim.data),l=siz.hist))
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(sim.data), (dens.hist(his) - (0.7*dnorm(sort(sim.data), -10, 1) + 0.3*dnorm(sort(sim.data), 5, 0.5)))^2)
 }
-sum(ise)/sim
-sd(ise)
+c10 = sum(ise)/sim
+d10 = sd(ise)
 
 
 ## Mixture Gaussian 
 set.seed(101145)
 ise = c()
 for (i in 1:sim) {
-  sim.data = c(rnorm(700, -10, 1), rnorm(300, 5, 0.5))
+  sim.data = c(rnorm(siz.sample*0.7, -10, 1), rnorm(siz.sample*0.3, 5, 0.5))
   mod <- densityMclust(sim.data)
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = sort(mod$data), (mod$density[order(mod$data)] - (0.7*dnorm(sort(mod$data), -10, 1) + 0.3*dnorm(sort(mod$data), 5, 0.5)))^2) # res 0.0006682952
 }
-sum(ise)/sim
-sd(ise)
+c11 = sum(ise)/sim
+d11 = sd(ise)
 
 
 ## Smooth Spline
 set.seed(101145)
 ise = c()
 for (i in 1:sim) {
-  sim.data = c(rnorm(700, -10, 1), rnorm(300, 5, 0.5))
+  sim.data = c(rnorm(siz.sample*0.7, -10, 1), rnorm(siz.sample*0.3, 5, 0.5))
   fit <- ssden(~ sim.data)
   domain <- fit$domain$sim.data
   xx <- seq(domain[1], domain[2], length = 101)
   # Simple numerical integration in pkg sfsminsc
   ise[i] = sfsmisc::integrate.xy(x = xx, (dssden(fit, xx) - (0.7*dnorm(xx, -10, 1) + 0.3*dnorm(xx, 5, 0.5)))^2)
 }
-sum(ise)/sim
-sd(ise)
+c12 = sum(ise)/sim
+d12 = sd(ise)
